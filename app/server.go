@@ -28,7 +28,7 @@ func main() {
 
 	buffer := make([]byte, 1024)
 	// buffer, err := io.ReadAll(conn)
-	_, err := conn.Read(buffer)
+	n, err := conn.Read(buffer)
 	if err != nil {
 		fmt.Println("Error accepting connection: ", err.Error())
 		os.Exit(1)	
@@ -47,7 +47,7 @@ func main() {
 		response = "HTTP/1.1 404 Not Found\r\n\r\n"
 	}
 
-	n, err = conn.Write([]byte(response))
+	m, err = conn.Write([]byte(response))
 	if err != nil {
 		fmt.Println("Error sending msg: ", err.Error())
 		os.Exit(1)
