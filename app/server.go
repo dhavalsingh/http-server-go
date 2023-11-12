@@ -11,7 +11,7 @@ import (
 func handleConnection (conn net.Conn){
 	buffer := make([]byte, 1024)
 	// buffer, err := io.ReadAll(conn)
-	_, err = conn.Read(buffer)
+	_, err := conn.Read(buffer)
 	if err != nil {
 		fmt.Println("Error accepting connection: ", err.Error())
 		os.Exit(1)	
