@@ -9,12 +9,13 @@ import (
 )
 
 func handleConnection (conn net.Conn){
+	defer conn.Close()
 	buffer := make([]byte, 1024)
 	// buffer, err := io.ReadAll(conn)
 	_, err := conn.Read(buffer)
 	if err != nil {
 		fmt.Println("Error accepting connection: ", err.Error())
-		os.Exit(1)	
+		// os.Exit(1)	
 	}
 	request := string(buffer)
 	lines := strings.Split(request, "\r\n")
@@ -45,7 +46,7 @@ func handleConnection (conn net.Conn){
 	_, err = conn.Write([]byte(response))
 	if err != nil {
 		fmt.Println("Error sending msg: ", err.Error())
-		os.Exit(1)
+		//os.Exit(1)
 	}
 }
 
