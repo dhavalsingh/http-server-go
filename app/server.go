@@ -38,13 +38,19 @@ func main() {
 	lines := strings.Split(request, "\r\n")
 	start_line := lines[0]
 	start_line_parts := strings.Fields(start_line)
-	path := start_line_parts[1]
+	rMethod, rPath, rProtocol := start_line_parts[0], start_line_parts[1], start_line_parts[2]
+
+	subRoute := strings.SPlit(rPath, "/")
 
 	var response string
 
-	if path == "/"{
+	switch subRoute[1] {
+	case "":
 		response = "HTTP/1.1 200 OK\r\n\r\n"
-	} else {
+	case "echo":
+		body := strings.Join(subRoutes[2:], "/")
+		response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(body), body)
+	default:
 		response = "HTTP/1.1 404 Not Found\r\n\r\n"
 	}
 
