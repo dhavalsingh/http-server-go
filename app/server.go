@@ -36,18 +36,24 @@ func main() {
 	}
 	request := string(buffer)
 	lines := strings.Split(request, "\r\n")
+	fmt.Printf(lines)
 	start_line := lines[0]
+	headers := lines[1]
 	start_line_parts := strings.Fields(start_line)
 	rMethod, rPath, rProtocol := start_line_parts[0], start_line_parts[1], start_line_parts[2]
 	fmt.Printf("method=%s, path=%s, protocol=%s\n", rMethod, rPath, rProtocol)
 
 	subRoute := strings.Split(rPath, "/")
+	ua := strings.Split(lines[2], " ")[1]
 
 	var response string
 
 	switch subRoute[1] {
 	case "":
 		response = "HTTP/1.1 200 OK\r\n\r\n"
+	case "user-agent":
+		ua := strings.Split(lines[2], " ")[1]
+		response = fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(ua), ua)
 	case "echo":
 		body := strings.Join(subRoute[2:], "/")
 		response = fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(body), body)
