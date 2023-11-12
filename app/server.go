@@ -50,7 +50,7 @@ func main() {
 		response = "HTTP/1.1 200 OK\r\n\r\n"
 	case "echo":
 		body := strings.Join(subRoute[2:], "/")
-		response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(body), body)
+		response = fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(body), body)
 	default:
 		response = "HTTP/1.1 404 Not Found\r\n\r\n"
 	}
