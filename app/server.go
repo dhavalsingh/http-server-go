@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func handleConnection (conn){
+func handleConnection (conn net.Conn){
 	buffer := make([]byte, 1024)
 	// buffer, err := io.ReadAll(conn)
 	_, err = conn.Read(buffer)
