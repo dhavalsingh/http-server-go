@@ -39,6 +39,7 @@ func main() {
 	start_line := lines[0]
 	start_line_parts := strings.Fields(start_line)
 	rMethod, rPath, rProtocol := start_line_parts[0], start_line_parts[1], start_line_parts[2]
+	fmt.Printf("method=%s, path=%s, protocol=%s\n", rMethod, rPath, rProtocol)
 
 	subRoute := strings.SPlit(rPath, "/")
 
