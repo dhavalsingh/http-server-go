@@ -43,8 +43,7 @@ func main() {
 
 	if path == "/"{
 		response = "HTTP/1.1 200 OK\r\n\r\n"
-	}
-	else {
+	} else {
 		response = "HTTP/1.1 404 Not Found\r\n\r\n"
 	}
 
