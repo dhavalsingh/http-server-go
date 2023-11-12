@@ -41,7 +41,7 @@ func main() {
 	rMethod, rPath, rProtocol := start_line_parts[0], start_line_parts[1], start_line_parts[2]
 	fmt.Printf("method=%s, path=%s, protocol=%s\n", rMethod, rPath, rProtocol)
 
-	subRoute := strings.SPlit(rPath, "/")
+	subRoute := strings.Split(rPath, "/")
 
 	var response string
 
@@ -49,7 +49,7 @@ func main() {
 	case "":
 		response = "HTTP/1.1 200 OK\r\n\r\n"
 	case "echo":
-		body := strings.Join(subRoutes[2:], "/")
+		body := strings.Join(subRoute[2:], "/")
 		response := fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(body), body)
 	default:
 		response = "HTTP/1.1 404 Not Found\r\n\r\n"
