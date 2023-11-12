@@ -37,7 +37,7 @@ func main() {
 	request := string(buffer)
 	lines := strings.Split(request, "\r\n")
 	start_line := lines[0]
-	start_line_parts = strings.Fields(start_line)
+	start_line_parts := strings.Fields(start_line)
 	path := start_line_parts[1]
 
 	var response string
