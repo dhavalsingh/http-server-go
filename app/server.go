@@ -56,7 +56,7 @@ func handleConnection (conn net.Conn, directory string){
 	case "echo":
 		body := strings.Join(subRoute[2:], "/")
 		response = fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(body), body)
-	case "files"
+	case "files":
 		file_name := strings.Join(subRoute[2:], "/")
 		filePath := filepath.Join(directory, file_name)
 		response = readFileContents(filePath)
