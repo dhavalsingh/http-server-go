@@ -32,7 +32,7 @@ func handleConnection (conn net.Conn, directory string){
 	defer conn.Close()
 	buffer := make([]byte, 1024)
 	// buffer, err := io.ReadAll(conn)
-	_, err := conn.Read(buffer)
+	n, err := conn.Read(buffer)
 	if err != nil {
 		fmt.Println("Error accepting connection: ", err.Error())
 		// os.Exit(1)	
@@ -55,7 +55,7 @@ func handleConnection (conn net.Conn, directory string){
 		filePath := filepath.Join(directory, fileName)
 
 		// Find the start of the body
-		bodyStartIndex := len(startLine) + 4 // Adjust this based on actual headers
+		bodyStartIndex := len(start_line) + 4 // Adjust this based on actual headers
 		for i, line := range lines {
 			if line == "" { // Empty line indicates end of headers
 				bodyStartIndex += len(strings.Join(lines[:i], "\r\n")) + 2
