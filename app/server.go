@@ -8,7 +8,7 @@ import (
 	"flag"
 )
 
-func readFileContents (filePath string){
+func readFileContents (filePath string) string {
 	file, err := os.Open(filePath)
 	if err != nil {
 		// Handle the error, possibly a 404 if the file doesn't exist
@@ -21,6 +21,7 @@ func readFileContents (filePath string){
 	if err != nil {
 		// Handle the error
 		fmt.Println("Error reading file: ", err.Error())
+		return "HTTP/1.1 500 Internal Server Error\r\n\r\n"
 	}
 	return fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: %d\r\n\r\n%s", len(contents), contents)
 }
