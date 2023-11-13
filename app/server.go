@@ -44,10 +44,10 @@ func handleConnection (conn net.Conn, directory string){
 	start_line_parts := strings.Fields(start_line)
 	rMethod, rPath, rProtocol := start_line_parts[0], start_line_parts[1], start_line_parts[2]
 	fmt.Printf("method=%s, path=%s, protocol=%s\n", rMethod, rPath, rProtocol)
-	fmt.Printf("lines: %s", lines)
-	fmt.Printf("lines0: %s", lines[0])
-	fmt.Printf("lines1: %s", lines[1])
-	fmt.Printf("lines2: %s", lines[2])
+	fmt.Printf("lines: %s\n", lines)
+	fmt.Printf("lines0: %s\n", lines[0])
+	fmt.Printf("lines1: %s\n", lines[1])
+	fmt.Printf("lines2: %s\n", lines[2])
 
 	subRoute := strings.Split(rPath, "/")
 	// ua := strings.Split(lines[2], " ")[1]
