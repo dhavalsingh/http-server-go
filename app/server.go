@@ -50,10 +50,10 @@ func handleConnection (conn net.Conn, directory string){
 
 	var response string
 
-	if r.Method == http.MethodPost {
+	if rMethod == "POST" {
 		fileName := strings.TrimPrefix(rPath, "/files/")
 		filePath := filepath.Join(directory, fileName)
-		body := buffer[len(startLine)+len(lines[1])+4:] // Assuming the body starts after the first line and headers
+		body := buffer[len(start_line)+len(lines[1])+4:] // Assuming the body starts after the first line and headers
 		err := os.WriteFile(filePath, body, 0644)
 		if err != nil {
 			fmt.Println("Error writing file: ", err.Error())
