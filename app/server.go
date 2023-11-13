@@ -32,12 +32,13 @@ func handleConnection (conn net.Conn, directory string){
 	defer conn.Close()
 	buffer := make([]byte, 1024)
 	// buffer, err := io.ReadAll(conn)
-	_, err := conn.Read(buffer)
+	n, err := conn.Read(buffer)
 	if err != nil {
 		fmt.Println("Error accepting connection: ", err.Error())
 		// os.Exit(1)	
 	}
-	request := string(buffer)
+	// request := string(buffer)
+	request := string(buffer[:n])
 	lines := strings.Split(request, "\r\n")
 	start_line := lines[0]
 	// headers := lines[1]
@@ -68,8 +69,10 @@ func handleConnection (conn net.Conn, directory string){
         }
 
         // Assuming headers and body fit in the buffer, extract the body
-        body := strings.Join(lines[headerLength+1:], "\r\n")
-        err := os.WriteFile(filePath, []byte(body), 0644)
+        // body := strings.Join(lines[headerLength+1:], "\r\n")
+		body := strings.Join(lines[headerLength+1:], "\r\n")
+		actualBody := []byte(body)
+        err := os.WriteFile(filePath, []byte(actualBody), 0644)
         if err != nil {
             fmt.Println("Error writing file: ", err.Error())
             response = "HTTP/1.1 500 Internal Server Error\r\n\r\n"
