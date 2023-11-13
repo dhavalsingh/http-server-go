@@ -32,7 +32,7 @@ func handleConnection (conn net.Conn, directory string){
 	defer conn.Close()
 	buffer := make([]byte, 1024)
 	// buffer, err := io.ReadAll(conn)
-	n, err := conn.Read(buffer)
+	_, err := conn.Read(buffer)
 	if err != nil {
 		fmt.Println("Error accepting connection: ", err.Error())
 		// os.Exit(1)	
@@ -44,7 +44,11 @@ func handleConnection (conn net.Conn, directory string){
 	start_line_parts := strings.Fields(start_line)
 	rMethod, rPath, rProtocol := start_line_parts[0], start_line_parts[1], start_line_parts[2]
 	fmt.Printf("method=%s, path=%s, protocol=%s\n", rMethod, rPath, rProtocol)
-	fmt.Printf("lines=%s", lines)
+	fmt.Printf("lines: %s", lines)
+	fmt.Printf("lines0: %s", lines[0])
+	fmt.Printf("lines1: %s", lines[1])
+	fmt.Printf("lines2: %s", lines[2])
+
 	subRoute := strings.Split(rPath, "/")
 	// ua := strings.Split(lines[2], " ")[1]
 
@@ -53,28 +57,13 @@ func handleConnection (conn net.Conn, directory string){
 	if rMethod == "POST" {
 		fileName := strings.TrimPrefix(rPath, "/files/")
 		filePath := filepath.Join(directory, fileName)
-
-		// Find the start of the body
-		bodyStartIndex := len(start_line) + 4 // Adjust this based on actual headers
-
-		for i, line := range lines {
-			if line == "" { // Empty line indicates end of headers
-				bodyStartIndex += len(strings.Join(lines[:i], "\r\n")) + 2
-				break
-			}
-		}
-
-		if bodyStartIndex < n {
-			body := buffer[bodyStartIndex:n]
-			err := os.WriteFile(filePath, body, 0644)
-			if err != nil {
-				fmt.Println("Error writing file: ", err.Error())
-				response = "HTTP/1.1 500 Internal Server Error\r\n\r\n"
-			} else {
-				response = "HTTP/1.1 201 Created\r\n\r\n"
-			}
+		body := buffer[len(start_line)+len(lines[1])+4:] // Assuming the body starts after the first line and headers
+		err := os.WriteFile(filePath, body, 0644)
+		if err != nil {
+			fmt.Println("Error writing file: ", err.Error())
+			response = "HTTP/1.1 500 Internal Server Error\r\n\r\n"
 		} else {
-			response = "HTTP/1.1 400 Bad Request\r\n\r\n"
+			response = "HTTP/1.1 201 Created\r\n\r\n"
 		}
 	} else {
 		switch subRoute[1] {
