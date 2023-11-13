@@ -44,7 +44,7 @@ func handleConnection (conn net.Conn, directory string){
 	start_line_parts := strings.Fields(start_line)
 	rMethod, rPath, rProtocol := start_line_parts[0], start_line_parts[1], start_line_parts[2]
 	fmt.Printf("method=%s, path=%s, protocol=%s\n", rMethod, rPath, rProtocol)
-
+	fmt.Printf("lines=%s", lines)
 	subRoute := strings.Split(rPath, "/")
 	// ua := strings.Split(lines[2], " ")[1]
 
@@ -56,6 +56,7 @@ func handleConnection (conn net.Conn, directory string){
 
 		// Find the start of the body
 		bodyStartIndex := len(start_line) + 4 // Adjust this based on actual headers
+
 		for i, line := range lines {
 			if line == "" { // Empty line indicates end of headers
 				bodyStartIndex += len(strings.Join(lines[:i], "\r\n")) + 2
