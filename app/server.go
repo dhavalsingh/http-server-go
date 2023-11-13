@@ -53,13 +53,27 @@ func handleConnection (conn net.Conn, directory string){
 	if rMethod == "POST" {
 		fileName := strings.TrimPrefix(rPath, "/files/")
 		filePath := filepath.Join(directory, fileName)
-		body := buffer[len(start_line)+len(lines[1])+4:] // Assuming the body starts after the first line and headers
-		err := os.WriteFile(filePath, body, 0644)
-		if err != nil {
-			fmt.Println("Error writing file: ", err.Error())
-			response = "HTTP/1.1 500 Internal Server Error\r\n\r\n"
+
+		// Find the start of the body
+		bodyStartIndex := len(startLine) + 4 // Adjust this based on actual headers
+		for i, line := range lines {
+			if line == "" { // Empty line indicates end of headers
+				bodyStartIndex += len(strings.Join(lines[:i], "\r\n")) + 2
+				break
+			}
+		}
+
+		if bodyStartIndex < n {
+			body := buffer[bodyStartIndex:n]
+			err := os.WriteFile(filePath, body, 0644)
+			if err != nil {
+				fmt.Println("Error writing file: ", err.Error())
+				response = "HTTP/1.1 500 Internal Server Error\r\n\r\n"
+			} else {
+				response = "HTTP/1.1 201 Created\r\n\r\n"
+			}
 		} else {
-			response = "HTTP/1.1 201 Created\r\n\r\n"
+			response = "HTTP/1.1 400 Bad Request\r\n\r\n"
 		}
 	} else {
 		switch subRoute[1] {
