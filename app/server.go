@@ -68,6 +68,7 @@ func handleConnection (conn net.Conn, directory string){
             }
         }
 
+		
         // Assuming headers and body fit in the buffer, extract the body
         // body := strings.Join(lines[headerLength+1:], "\r\n")
 		body := strings.Join(lines[headerLength+1:], "\r\n")
