@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"flag"
+	"io"
 )
 
 func readFileContents (filePath string) string {
@@ -17,7 +18,7 @@ func readFileContents (filePath string) string {
 	}
 	defer file.Close()
 	
-	contents, err := ioutil.ReadAll(file)
+	contents, err := io.ReadAll(file)
 	if err != nil {
 		// Handle the error
 		fmt.Println("Error reading file: ", err.Error())
