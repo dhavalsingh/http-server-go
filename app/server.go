@@ -7,6 +7,7 @@ import (
 	"strings"
 	"flag"
 	"io"
+	"filepath"
 )
 
 func readFileContents (filePath string) string {
