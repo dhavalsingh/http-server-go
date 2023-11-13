@@ -2,13 +2,30 @@ package main
 
 import (
 	"fmt"
-	// Uncomment this block to pass the first stage
 	"net"
 	"os"
 	"strings"
+	"flag"
 )
 
-func handleConnection (conn net.Conn){
+func readFileContents (filePath string){
+	file, err := os.Open(filePath)
+	if err != nil {
+		// Handle the error, possibly a 404 if the file doesn't exist
+		fmt.Println("Error accepting connection: ", err.Error())
+		return "HTTP/1.1 404 Not Found\r\n\r\n"
+	}
+	defer file.Close()
+	
+	contents, err := ioutil.ReadAll(file)
+	if err != nil {
+		// Handle the error
+		fmt.Println("Error reading file: ", err.Error())
+	}
+	return fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: %d\r\n\r\n%s", len(contents), contents)
+}
+
+func handleConnection (conn net.Conn, directory string){
 	defer conn.Close()
 	buffer := make([]byte, 1024)
 	// buffer, err := io.ReadAll(conn)
@@ -39,6 +56,10 @@ func handleConnection (conn net.Conn){
 	case "echo":
 		body := strings.Join(subRoute[2:], "/")
 		response = fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(body), body)
+	case "files"
+		file_name := strings.Join(subRoute[2:], "/")
+		filePath := filepath.Join(directory, file_name)
+		response = readFileContents(filePath)
 	default:
 		response = "HTTP/1.1 404 Not Found\r\n\r\n"
 	}
@@ -53,8 +74,9 @@ func handleConnection (conn net.Conn){
 func main() {
 	// You can use print statements as follows for debugging, they'll be visible when running tests.
 	fmt.Println("Logs from your program will appear here!")
-
-	// Uncomment this block to pass the first stage
+	var directory string
+	flag.StringVar(&directory, "directory", "", "the directory to serve files from")
+	flag.Parse()
 	
 	l, err := net.Listen("tcp", "0.0.0.0:4221")
 	if err != nil {
@@ -67,6 +89,6 @@ func main() {
 		if err != nil {
 			fmt.Println("Error accepting connection: ", err.Error())
 		}
-		go handleConnection(conn)
+		go handleConnection(conn, directory)
 	}
 }
