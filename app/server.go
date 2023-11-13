@@ -50,21 +50,34 @@ func handleConnection (conn net.Conn, directory string){
 
 	var response string
 
-	switch subRoute[1] {
-	case "":
-		response = "HTTP/1.1 200 OK\r\n\r\n"
-	case "user-agent":
-		ua := strings.Split(lines[2], " ")[1]
-		response = fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(ua), ua)
-	case "echo":
-		body := strings.Join(subRoute[2:], "/")
-		response = fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(body), body)
-	case "files":
-		file_name := strings.Join(subRoute[2:], "/")
-		filePath := filepath.Join(directory, file_name)
-		response = readFileContents(filePath)
-	default:
-		response = "HTTP/1.1 404 Not Found\r\n\r\n"
+	if r.Method == http.MethodPost {
+		fileName := strings.TrimPrefix(rPath, "/files/")
+		filePath := filepath.Join(directory, fileName)
+		body := buffer[len(startLine)+len(lines[1])+4:] // Assuming the body starts after the first line and headers
+		err := os.WriteFile(filePath, body, 0644)
+		if err != nil {
+			fmt.Println("Error writing file: ", err.Error())
+			response = "HTTP/1.1 500 Internal Server Error\r\n\r\n"
+		} else {
+			response = "HTTP/1.1 201 Created\r\n\r\n"
+		}
+	} else {
+		switch subRoute[1] {
+		case "":
+			response = "HTTP/1.1 200 OK\r\n\r\n"
+		case "user-agent":
+			ua := strings.Split(lines[2], " ")[1]
+			response = fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(ua), ua)
+		case "echo":
+			body := strings.Join(subRoute[2:], "/")
+			response = fmt.Sprintf("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s", len(body), body)
+		case "files":
+			file_name := strings.Join(subRoute[2:], "/")
+			filePath := filepath.Join(directory, file_name)
+			response = readFileContents(filePath)
+		default:
+			response = "HTTP/1.1 404 Not Found\r\n\r\n"
+		}
 	}
 
 	_, err = conn.Write([]byte(response))
