@@ -55,16 +55,27 @@ func handleConnection (conn net.Conn, directory string){
 	var response string
 
 	if rMethod == "POST" {
-		fileName := strings.TrimPrefix(rPath, "/files/")
-		filePath := filepath.Join(directory, fileName)
-		body := buffer[len(start_line)+len(lines[1])+4:] // Assuming the body starts after the first line and headers
-		err := os.WriteFile(filePath, body, 0644)
-		if err != nil {
-			fmt.Println("Error writing file: ", err.Error())
-			response = "HTTP/1.1 500 Internal Server Error\r\n\r\n"
-		} else {
-			response = "HTTP/1.1 201 Created\r\n\r\n"
-		}
+        fileName := strings.TrimPrefix(rPath, "/files/")
+        filePath := filepath.Join(directory, fileName)
+
+        // Find the index of the empty line
+        var headerLength int
+        for i, line := range lines {
+            if line == "" {
+                headerLength = i
+                break
+            }
+        }
+
+        // Assuming headers and body fit in the buffer, extract the body
+        body := strings.Join(lines[headerLength+1:], "\r\n")
+        err := os.WriteFile(filePath, []byte(body), 0644)
+        if err != nil {
+            fmt.Println("Error writing file: ", err.Error())
+            response = "HTTP/1.1 500 Internal Server Error\r\n\r\n"
+        } else {
+            response = "HTTP/1.1 201 Created\r\n\r\n"
+        }
 	} else {
 		switch subRoute[1] {
 		case "":
